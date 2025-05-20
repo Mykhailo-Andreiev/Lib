@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Реєстрація</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="page-auth">
+<header class="main-header">
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="/" class="nav-link">Головна</a>
+            <a href="/books/" class="nav-link">Каталог</a>
+            <a href="/archive/" class="nav-link">Електронний архів</a>
+        </div>
+
+        <div class="navbar-right">
+            {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}" class="nav-link nav-user">👤 {{ user.username }}</a>
+            <a href="{% url 'logout' %}" class="nav-link">🚪 Вийти</a>
+
+            {% else %}
+            <a href="{% url 'login' %}" class="nav-link">🔑 Вхід</a>
+            <a href="{% url 'register' %}" class="nav-link">📝 Реєстрація</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<div class="auth-container">
+    <h2>📝 Реєстрація</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            {{ form.username.label_tag }}
+            {{ form.username }}
+        </div>
+        <div>
+            {{ form.email.label_tag }}
+            {{ form.email }}
+        </div>
+        <div>
+            {{ form.first_name.label_tag }}
+            {{ form.first_name }}
+        </div>
+        <div>
+            {{ form.last_name.label_tag }}
+            {{ form.last_name }}
+        </div>
+        <div>
+            {{ form.phone.label_tag }}
+            {{ form.phone }}
+        </div>
+        <div>
+            {{ form.gender.label_tag }}
+            {{ form.gender }}
+        </div>
+        <div>
+            {{ form.password1.label_tag }}
+            {{ form.password1 }}
+        </div>
+        <div>
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+        </div>
+        <button type="submit" class="button">Зареєструватися</button>
+    </form>
+</div>
+</body>
+</html>

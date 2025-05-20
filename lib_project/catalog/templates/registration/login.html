@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Вхід</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="page-auth">
+
+<header class="main-header">
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="/" class="nav-link">Головна</a>
+            <a href="/books/" class="nav-link">Каталог</a>
+            <a href="/archive/" class="nav-link">Електронний архів</a>
+        </div>
+
+        <div class="navbar-right">
+            {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}" class="nav-link nav-user">👤 {{ user.username }}</a>
+            <a href="{% url 'logout' %}" class="nav-link">🚪 Вийти</a>
+
+            {% else %}
+            <a href="{% url 'login' %}" class="nav-link">🔑 Вхід</a>
+            <a href="{% url 'register' %}" class="nav-link">📝 Реєстрація</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<div class="auth-container">
+    <h2>🔐 Вхід</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="{{ form.username.id_for_label }}">Ім’я користувача:</label>
+            {{ form.username }}
+        </div>
+        <div>
+            <label for="{{ form.password.id_for_label }}">Пароль:</label>
+            {{ form.password }}
+        </div>
+        <button type="submit" class="button">Увійти</button>
+    </form>
+
+</div>
+</body>
+</html>

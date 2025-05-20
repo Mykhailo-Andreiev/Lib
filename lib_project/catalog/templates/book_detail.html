@@ -1,0 +1,112 @@
+{% load static %}
+
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ book.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<style>
+    .book-info p {
+        font-size: 17px;
+        line-height: 1.6;
+    }
+
+    .book-info {
+    max-width: 100%;
+    flex: 1;
+}
+</style>
+
+<body class="page-book-detail">
+
+<header class="main-header">
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="/" class="nav-link">Головна</a>
+            <a href="/books/" class="nav-link">Каталог</a>
+            <a href="/archive/" class="nav-link">Електронний архів</a>
+        </div>
+
+        <div class="navbar-right">
+            {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}" class="nav-link nav-user">👤 {{ user.username }}</a>
+            <a href="{% url 'logout' %}" class="nav-link">🚪 Вийти</a>
+
+            {% else %}
+            <a href="{% url 'login' %}" class="nav-link">🔑 Вхід</a>
+            <a href="{% url 'register' %}" class="nav-link">📝 Реєстрація</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<div class="container detail-container">
+    <div class="book-detail">
+        <div class="book-image">
+            {% if book.image %}
+            <img src="{{ book.image.url }}" alt="{{ book.title }}">
+            {% else %}
+            <img src="{% static 'img/default_cover.jpg' %}" alt="No cover">
+            {% endif %}
+        </div>
+        <div class="book-info">
+            <h1>{{ book.title }}</h1>
+            <p><strong>Автор:</strong> {{ book.author }}</p>
+            <p><strong>Жанр:</strong> {{ book.genre }}</p>
+            <p><strong>Мова:</strong> {{ book.language }}</p>
+            <p><strong>Кількість сторінок:</strong> {{ book.pages }}</p>
+            <p><strong>Рік видання:</strong> {{ book.year }}</p>
+            <p><strong>Опис:</strong><br>{{ book.description }}</p>
+            <p>
+                {% if book.available %}
+                <span class="available">✅ В наявності</span>
+                {% else %}
+                <span class="not-available">❌ Недоступна</span>
+                {% endif %}
+            </p>
+
+            {% if user.is_authenticated and book.available %}
+            <form method="post" action="{% url 'book_reserve' book.id %}">
+                {% csrf_token %}
+                <button type="submit" class="button reserve-button">📚 Забронювати</button>
+            </form>
+            {% endif %}
+
+            <br>
+            <a href="{% url 'books' %}" class="button">← Назад до каталогу</a>
+        </div>
+    </div>
+
+    <hr>
+    <h3>⭐ Рейтинг та відгуки</h3>
+    <p><strong>Середній рейтинг:</strong> {{ book.average_rating }} / 5</p>
+
+    {% if user.is_authenticated %}
+    <form method="post" class="rating-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="button">📩 Зберегти оцінку</button>
+    </form>
+    {% else %}
+    <p>🔐 <a href="{% url 'login' %}">Увійдіть</a>, щоб залишити оцінку чи коментар.</p>
+    {% endif %}
+
+    <hr>
+    <h4>💬 Коментарі:</h4>
+    <ul class="comment-list">
+        {% for r in ratings %}
+        <li class="comment-item">
+            <strong>{{ r.user.username }}</strong> — {{ r.rating }}⭐<br>
+            <em>{{ r.comment }}</em><br>
+            <small>{{ r.rated_at|date:"d.m.Y H:i" }}</small>
+        </li>
+        {% empty %}
+        <li>📭 Коментарів поки немає.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+</body>
+</html>

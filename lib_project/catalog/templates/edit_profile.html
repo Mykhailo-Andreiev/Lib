@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Редагувати профіль</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="page-auth">
+
+<header class="main-header">
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="/" class="nav-link">Головна</a>
+            <a href="/books/" class="nav-link">Каталог</a>
+            <a href="/archive/" class="nav-link">Електронний архів</a>
+        </div>
+
+        <div class="navbar-right">
+            {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}" class="nav-link nav-user">👤 {{ user.username }}</a>
+            <a href="{% url 'logout' %}" class="nav-link">🚪 Вийти</a>
+
+            {% else %}
+            <a href="{% url 'login' %}" class="nav-link">🔑 Вхід</a>
+            <a href="{% url 'register' %}" class="nav-link">📝 Реєстрація</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<div class="auth-container">
+    <h2>✏️ Редагувати профіль</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="{{ form.username.id_for_label }}">Ім’я користувача:</label>
+            {{ form.username }}
+        </div>
+        <div>
+            <label for="{{ form.email.id_for_label }}">Email:</label>
+            {{ form.email }}
+        </div>
+        <div>
+            <label for="{{ form.first_name.id_for_label }}">Ім’я:</label>
+            {{ form.first_name }}
+        </div>
+        <div>
+            <label for="{{ form.last_name.id_for_label }}">Прізвище:</label>
+            {{ form.last_name }}
+        </div>
+        <div>
+            <label for="{{ form.phone.id_for_label }}">Номер телефону:</label>
+            {{ form.phone }}
+        </div>
+        <div>
+            <label for="{{ form.gender.id_for_label }}">Стать:</label>
+            {{ form.gender }}
+        </div>
+        <div>
+            <label for="{{ form.old_password.id_for_label }}">Старий пароль:</label>
+            {{ form.old_password }}
+        </div>
+        <div>
+            <label for="{{ form.new_password.id_for_label }}">Новий пароль:</label>
+            {{ form.new_password }}
+        </div>
+        <button type="submit" class="button">💾 Зберегти</button>
+    </form>
+
+</div>
+
+</body>
+</html>

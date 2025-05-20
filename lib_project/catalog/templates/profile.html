@@ -1,0 +1,94 @@
+{% load static %}
+
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Особистий кабінет</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="page-profile">
+
+<header class="main-header">
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="/" class="nav-link">Головна</a>
+            <a href="/books/" class="nav-link">Каталог</a>
+            <a href="/archive/" class="nav-link">Електронний архів</a>
+        </div>
+
+        <div class="navbar-right">
+            {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}" class="nav-link nav-user">👤 {{ user.username }}</a>
+            <a href="{% url 'logout' %}" class="nav-link">🚪 Вийти</a>
+
+            {% else %}
+            <a href="{% url 'login' %}" class="nav-link">🔑 Вхід</a>
+            <a href="{% url 'register' %}" class="nav-link">📝 Реєстрація</a>
+            <a href="{% url 'register' %}" class="nav-link">📝 Реєстрація</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<div class="container">
+    <h2>👤 Особистий кабінет</h2>
+
+    <hr class="section-divider">
+
+    <p><strong>Логін:</strong> {{ user.username }}</p>
+    <p><strong>Ім’я:</strong> {{ user.first_name }}</p>
+    <p><strong>Прізвище:</strong> {{ user.last_name }}</p>
+    <p><strong>Телефон:</strong> {{ user.userprofile.phone }}</p>
+    <p><strong>Стать:</strong> {{ user.userprofile.get_gender_display }}</p>
+
+    <form action="{% url 'edit_profile' %}" method="get">
+        <button type="submit" class="librarian-button-2">✏️ Редагувати профіль</button>
+    </form>
+
+
+
+    {% if user.userprofile.is_librarian %}
+    <hr class="section-divider">
+    <div class="librarian-panel">
+        <h3>Розділ бібліотекаря</h3>
+        <form action="{% url 'librarian_bookings' %}" method="get">
+            <button type="submit" class="librarian-button-2">Панель керування</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <hr class="section-divider">
+    <h3>📖 Мої бронювання:</h3>
+    {% if bookings %}
+    <ul class="booking-history">
+        {% for booking in bookings %}
+        <li class="booking-entry">
+            <div class="booking-item">
+                <a href="{% url 'book_detail' booking.book.id %}" class="booking-link">
+                    {% if booking.book.image %}
+                    <img src="{{ booking.book.image.url }}" alt="{{ booking.book.title }}" class="booking-thumb">
+                    {% else %}
+                    <img src="{% static 'img/default_cover.jpg' %}" alt="No image" class="booking-thumb">
+                    {% endif %}
+                    <span class="booking-text">
+                        {{ booking.book.title }} — {{ booking.booking_date|date:"d.m.Y H:i" }}
+                        <span>({{ booking.get_status_display }})</span>
+                    </span>
+                </a>
+                {% if booking.status == 'active' %}
+                <form method="post" action="{% url 'cancel_booking' booking.id %}" class="cancel-form">
+                    {% csrf_token %}
+                    <button type="submit" class="cancel-btn">❌ Скасувати</button>
+                </form>
+                {% endif %}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>📭 Немає активних бронювань.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>
